@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Final Roadmap Dashboard · ECON 2103</title>
+<style>
+:root{--bg:#F6F7F9;--card:#FFF;--ink:#1C2330;--muted:#5B6576;--line:#DCE1E8;--navy:#13294B;--gold:#C28A1E;--gold-soft:#FBF3DD;
+  --ok:#2C6E49;--ok-soft:#E5F2EA;--warn:#B07A10;--warn-soft:#FBF1DC;--bad:#9E3B2F;--bad-soft:#F7E6E3;--shadow:0 1px 2px rgba(19,41,75,.06),0 4px 14px rgba(19,41,75,.07)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0F1621;--card:#17212F;--ink:#E7ECF3;--muted:#9AA6B6;--line:#2A3748;--navy:#9DB7E0;--gold:#E3B455;--gold-soft:#2C2616;
+  --ok:#7CC79A;--ok-soft:#1C3326;--warn:#E3B455;--warn-soft:#332A16;--bad:#E28A7C;--bad-soft:#3A2220;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25)}}
+:root[data-theme="dark"]{--bg:#0F1621;--card:#17212F;--ink:#E7ECF3;--muted:#9AA6B6;--line:#2A3748;--navy:#9DB7E0;--gold:#E3B455;--gold-soft:#2C2616;
+  --ok:#7CC79A;--ok-soft:#1C3326;--warn:#E3B455;--warn-soft:#332A16;--bad:#E28A7C;--bad-soft:#3A2220}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2{font-family:Cambria,Georgia,serif;color:var(--navy);margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+.kicker{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);font-weight:700}
+h1{font-size:clamp(28px,4.5vw,40px);margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+.btn.on{background:var(--navy);color:var(--bg);border-color:var(--navy);font-weight:700}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.live{font-size:13px;color:var(--muted);margin-left:auto}
+.live i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:8px 0 20px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.tile .v{font-family:Cambria,Georgia,serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .l{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:20px}
+.card h2{font-size:21px;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 8px}
+td{border-bottom:1px solid var(--line);padding:8px;vertical-align:middle}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.qid{font-weight:800;color:var(--navy);white-space:nowrap}
+.qt{color:var(--muted);font-size:13px;max-width:430px}
+.meter{position:relative;height:14px;background:var(--line);border-radius:99px;overflow:hidden;min-width:120px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.pct{font-weight:800;font-variant-numeric:tabular-nums}
+.good{color:var(--ok)}.mid{color:var(--warn)}.bad{color:var(--bad)}
+.stack{display:flex;height:22px;border-radius:7px;overflow:hidden;background:var(--line);min-width:160px}
+.stack span{display:block;height:100%}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted);margin:6px 0 10px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+.keybox{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.keybox input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);min-width:220px}
+.err{color:var(--bad);font-size:14px;margin-top:6px}
+.wide{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">ECON 2103 · Final Exam Roadmap · Instructor view</div>
+  <h1>Live class dashboard</h1>
+  <div class="card" id="keyCard" style="margin-top:16px">
+    <h2>Dashboard key</h2>
+    <div class="sub">Enter the key set in the Google Sheet script. It stays in this browser only.</div>
+    <div class="keybox"><input id="keyIn" type="password" autocomplete="off" aria-label="Dashboard key"><button class="btn on" id="keyGo">Open dashboard</button></div>
+    <div class="err" id="keyErr"></div>
+  </div>
+  <div id="dash" hidden>
+    <div class="bar" role="group" aria-label="Section filter">
+      <button class="btn on" data-sec="all">All sections</button><button class="btn" data-sec="001">001</button><button class="btn" data-sec="002">002</button><button class="btn" data-sec="029">029</button>
+      <span class="live" id="live"><i></i>Waiting for data</span>
+    </div>
+    <div class="tiles">
+      <div class="tile"><div class="v" id="tUsers">0</div><div class="l">students (browsers) who used it</div></div>
+      <div class="tile"><div class="v" id="tAns">0</div><div class="l">first-try answers recorded</div></div>
+      <div class="tile"><div class="v" id="tAcc">-</div><div class="l">overall first-try accuracy</div></div>
+      <div class="tile"><div class="v" id="tLow">-</div><div class="l">hardest question right now</div></div>
+    </div>
+    <div class="card"><h2>Questions, hardest first</h2>
+      <div class="sub">First-try accuracy: the share of students whose very first click was right. Sorted lowest first, so the top rows are what to go over.</div>
+      <div class="wide"><table><thead><tr><th>Question</th><th>Stop</th><th class="num">Answers</th><th>First-try accuracy</th><th class="num">Picked A / B / C</th></tr></thead><tbody id="qBody"></tbody></table></div>
+    </div>
+    <div class="card"><h2>How students rate each stop</h2>
+      <div class="sub">Each student's latest rating per stop.</div>
+      <div class="legend"><span><b style="background:var(--ok)"></b>Got it</span><span><b style="background:var(--warn)"></b>A bit shaky</span><span><b style="background:var(--bad)"></b>Not yet</span></div>
+      <div class="wide"><table><thead><tr><th>Stop</th><th>Ratings</th><th class="num">Got it</th><th class="num">Shaky</th><th class="num">Not yet</th></tr></thead><tbody id="rBody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+<script>
+const ENDPOINT="https://script.google.com/macros/s/AKfycbx97uagaehM_3xJTnjwgbbtNi26eETzalF0iXKHvp_gQF1gq7ndKKwBGvESwsyr0aAcSg/exec", CAT=[{"id": "F1", "lecture": "F1", "lec": "Stop 1", "title": "Scarcity, demand, supply and equilibrium", "q": "A student can spend Friday evening at a $60 shift, a $40 tutoring session, or a $10 babysitting job. If the student works the $60 shift, the opportunity cost is", "label": "Practice Set Q1", "key": "A"}, {"id": "F2", "lecture": "F1", "lec": "Stop 1", "title": "Scarcity, demand, supply and equilibrium", "q": "When the price of tacos rises, Maria buys more burritos. For Maria, tacos and burritos are", "label": "Practice Set Q2", "key": "A"}, {"id": "F3", "lecture": "F1", "lec": "Stop 1", "title": "Scarcity, demand, supply and equilibrium", "q": "A new technology cuts the cost of making solar panels. In the market for solar panels, the supply curve", "label": "Practice Set Q3", "key": "B"}, {"id": "F4", "lecture": "F1", "lec": "Stop 1", "title": "Scarcity, demand, supply and equilibrium", "q": "At a price of $12, quantity supplied is 90 and quantity demanded is 60. At this price there is a", "label": "Practice Set Q4", "key": "B"}, {"id": "F5", "lecture": "F2", "lec": "Stop 2", "title": "Shifts and price controls", "q": "A city sets a binding rent ceiling BELOW the equilibrium rent. The result is a", "label": "Practice Set Q5", "key": "C"}, {"id": "F23", "lecture": "F2", "lec": "Stop 2", "title": "Shifts and price controls", "q": "Demand INCREASES and supply INCREASES at the same time. Which graph correctly shows both shifts? (Circle the letter under the correct graph.)", "label": "Practice Set Q23", "key": "B"}, {"id": "F6", "lecture": "F3", "lec": "Stop 3", "title": "Elasticity and market failure", "q": "The demand for a good is price ELASTIC. If the seller wants to raise total revenue, it should", "label": "Practice Set Q6", "key": "C"}, {"id": "F7", "lecture": "F3", "lec": "Stop 3", "title": "Elasticity and market failure", "q": "Vaccinations protect the person vaccinated and also protect people around them. Because of this positive externality, the free market tends to", "label": "Practice Set Q7", "key": "A"}, {"id": "F8", "lecture": "F4", "lec": "Stop 4", "title": "Production and costs", "q": "The third worker adds 12 units of output and the fourth worker adds 8. This illustrates", "label": "Practice Set Q8", "key": "C"}, {"id": "F9", "lecture": "F4", "lec": "Stop 4", "title": "Production and costs", "q": "A bakery earns total revenue of $500. Its explicit costs are $300 and the implicit cost of the owner's time is $250. Its economic profit is", "label": "Practice Set Q9", "key": "C"}, {"id": "F10", "lecture": "F4", "lec": "Stop 4", "title": "Production and costs", "q": "When marginal cost is ABOVE average total cost, average total cost is", "label": "Practice Set Q10", "key": "A"}, {"id": "F11", "lecture": "F4", "lec": "Stop 4", "title": "Production and costs", "q": "As a firm doubles its size, its long-run average cost falls. This is", "label": "Practice Set Q11", "key": "B"}, {"id": "F12", "lecture": "F5", "lec": "Stop 5", "title": "Perfect competition", "q": "A firm in a perfectly competitive market can sell as much as it wants at the market price, so its marginal revenue is", "label": "Practice Set Q12", "key": "C"}, {"id": "F13", "lecture": "F5", "lec": "Stop 5", "title": "Perfect competition", "q": "Firms in a perfectly competitive market are earning LOSSES. Over time, firms", "label": "Practice Set Q13", "key": "B"}, {"id": "F24", "lecture": "F5", "lec": "Stop 5", "title": "Perfect competition", "q": "Each graph shows a firm in a perfectly competitive market. In which graph is the firm earning an economic PROFIT? (Circle the letter of the correct graph.)", "label": "Practice Set Q24", "key": "A"}, {"id": "F14", "lecture": "F6", "lec": "Stop 6", "title": "Monopoly", "q": "To maximize profit, a monopoly first finds the quantity where marginal revenue equals marginal cost, and then it", "label": "Practice Set Q14", "key": "A"}, {"id": "F25", "lecture": "F6", "lec": "Stop 6", "title": "Monopoly", "q": "In which graph does the shaded area show the monopoly's DEADWEIGHT LOSS? (Circle the letter of the correct graph.)", "label": "Practice Set Q25", "key": "B"}, {"id": "F15", "lecture": "F7", "lec": "Stop 7", "title": "Monopolistic competition", "q": "Which market structure best describes the 15 burger restaurants on the main street of a town?", "label": "Practice Set Q15", "key": "B"}, {"id": "F16", "lecture": "F7", "lec": "Stop 7", "title": "Monopolistic competition", "q": "Why do firms in monopolistic competition spend so much on advertising?", "label": "Practice Set Q16", "key": "A"}, {"id": "F17", "lecture": "F7", "lec": "Stop 7", "title": "Monopolistic competition", "q": "In long-run equilibrium, a firm in monopolistic competition has", "label": "Practice Set Q17", "key": "C"}, {"id": "F26", "lecture": "F7", "lec": "Stop 7", "title": "Monopolistic competition", "q": "Which graph shows a firm in monopolistic competition that will EXIT the market in the long run? (Circle the letter of the correct graph.)", "label": "Practice Set Q26", "key": "C"}, {"id": "F18", "lecture": "F8", "lec": "Stop 8", "title": "Oligopoly I: rivals, kinked demand, price leadership", "q": "Four firms have market shares of 40%, 40%, 10%, and 10%. The HHI is", "label": "Practice Set Q18", "key": "A"}, {"id": "F19", "lecture": "F8", "lec": "Stop 8", "title": "Oligopoly I: rivals, kinked demand, price leadership", "q": "The kinked demand model predicts that oligopoly prices tend to be", "label": "Practice Set Q19", "key": "B"}, {"id": "F27", "lecture": "F8", "lec": "Stop 8", "title": "Oligopoly I: rivals, kinked demand, price leadership", "q": "In which graph is the part of demand ABOVE the kink more elastic (flatter) than the part BELOW the kink? (Circle the letter of the correct graph.)", "label": "Practice Set Q27", "key": "A"}, {"id": "F20", "lecture": "F9", "lec": "Stop 9", "title": "Oligopoly II: cartels and game theory", "q": "The main reason a cartel tends to fall apart is that", "label": "Practice Set Q20", "key": "C"}, {"id": "F21", "lecture": "F9", "lec": "Stop 9", "title": "Oligopoly II: cartels and game theory", "q": "Two firms each choose to HOLD a high price or CHEAT with a low price. If both hold, each earns $100. If one cheats while the other holds, the cheater earns $140 and the other earns $40. If both cheat, each earns $60. Each firm's dominant strategy is to", "label": "Practice Set Q21", "key": "B"}, {"id": "F22", "lecture": "F9", "lec": "Stop 9", "title": "Oligopoly II: cartels and game theory", "q": "Firms in a repeated game may keep a cartel price without ever meeting, because each fears that cheating will trigger a price war. This outcome is called", "label": "Practice Set Q22", "key": "C"}], LECS=[{"id": "F1", "lec": "Stop 1", "title": "Scarcity, demand, supply and equilibrium"}, {"id": "F2", "lec": "Stop 2", "title": "Shifts and price controls"}, {"id": "F3", "lec": "Stop 3", "title": "Elasticity and market failure"}, {"id": "F4", "lec": "Stop 4", "title": "Production and costs"}, {"id": "F5", "lec": "Stop 5", "title": "Perfect competition"}, {"id": "F6", "lec": "Stop 6", "title": "Monopoly"}, {"id": "F7", "lec": "Stop 7", "title": "Monopolistic competition"}, {"id": "F8", "lec": "Stop 8", "title": "Oligopoly I: rivals, kinked demand, price leadership"}, {"id": "F9", "lec": "Stop 9", "title": "Oligopoly II: cartels and game theory"}];
+const LECNAME=Object.fromEntries(LECS.map(l=>[l.id,l.lec+": "+l.title]));
+let key="", sec="all", data=null, timer=null;
+try{ key=localStorage.getItem("econ2103-roadmap-dashkey")||""; }catch(e){}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pct=(a,b)=>b?Math.round(a/b*100):null;
+function cls(p){ return p===null?"":(p>=75?"good":(p>=50?"mid":"bad")); }
+function color(p){ return p>=75?"var(--ok)":(p>=50?"var(--warn)":"var(--bad)"); }
+
+function fetchData(){
+  if(!ENDPOINT || ENDPOINT.indexOf("http")!==0){ document.getElementById("keyErr").textContent="The Google Sheet link is not set up yet."; return; }
+  const cb="cb"+Date.now(); const s=document.createElement("script");
+  const kill=()=>{ try{delete window[cb];}catch(e){} s.remove(); };
+  window[cb]=d=>{ kill(); if(d.error){ document.getElementById("keyErr").textContent="That key did not work."; document.getElementById("dash").hidden=true; document.getElementById("keyCard").hidden=false; clearInterval(timer); return; }
+    document.getElementById("keyCard").hidden=true; document.getElementById("dash").hidden=false; data=d; render(); };
+  s.onerror=()=>{ kill(); document.getElementById("live").innerHTML='<i style="background:var(--bad)"></i>Could not reach the sheet, retrying'; };
+  s.src=ENDPOINT+"?key="+encodeURIComponent(key)+"&callback="+cb+"&t="+Date.now();
+  document.body.appendChild(s);
+}
+function render(){
+  if(!data) return;
+  const it=data.items||{}, rt=data.ratings||{};
+  let tot=0, cor=0;
+  const rows=CAT.map(c=>{ const o=(it[c.id]||{})[sec]||{n:0,correct:0,A:0,B:0,C:0}; tot+=o.n; cor+=o.correct; return {c,o,p:pct(o.correct,o.n)}; });
+  rows.sort((a,b)=>{ if(a.p===null&&b.p===null) return 0; if(a.p===null) return 1; if(b.p===null) return -1; return a.p-b.p || b.o.n-a.o.n; });
+  document.getElementById("tUsers").textContent=(data.users||{})[sec]||0;
+  document.getElementById("tAns").textContent=tot;
+  const ap=pct(cor,tot); const ta=document.getElementById("tAcc"); ta.textContent=ap===null?"-":ap+"%"; ta.className="v "+cls(ap);
+  const low=rows.find(r=>r.p!==null); document.getElementById("tLow").textContent=low?low.c.id+" · "+low.p+"%":"-";
+  document.getElementById("qBody").innerHTML=rows.map(r=>{
+    const {c,o,p}=r;
+    const picks=o.n?["A","B","C"].map(k=>k===c.key?`<b class="good">${o[k]}</b>`:o[k]).join(" / "):"-";
+    return `<tr><td><div class="qid">${esc(c.label)}</div><div class="qt">${esc(c.q.length>110?c.q.slice(0,107)+"...":c.q)}</div></td>
+      <td>${esc(c.lec)}</td><td class="num">${o.n}</td>
+      <td>${p===null?'<span class="empty">no answers yet</span>':`<div style="display:flex;align-items:center;gap:10px"><div class="meter" style="flex:1"><i style="width:${p}%;background:${color(p)}"></i></div><span class="pct ${cls(p)}">${p}%</span></div>`}</td>
+      <td class="num">${picks}<div class="qt">key ${c.key}</div></td></tr>`; }).join("");
+  document.getElementById("rBody").innerHTML=LECS.map(l=>{
+    const o=(rt[l.id]||{})[sec]||{got:0,shaky:0,not:0}; const n=o.got+o.shaky+o.not;
+    const seg=(v,col)=>n&&v?`<span style="width:${v/n*100}%;background:${col}" title="${v}"></span>`:"";
+    return `<tr><td><b>${esc(l.lec)}</b> <span class="qt">${esc(l.title)}</span></td>
+      <td>${n?`<div class="stack">${seg(o.got,"var(--ok)")}${seg(o.shaky,"var(--warn)")}${seg(o.not,"var(--bad)")}</div>`:'<span class="empty">no ratings yet</span>'}</td>
+      <td class="num">${o.got}</td><td class="num">${o.shaky}</td><td class="num">${o.not}</td></tr>`; }).join("");
+  const t=data.last?new Date(data.last):null;
+  document.getElementById("live").innerHTML=`<i></i>Live, refreshes every 10 s · updated ${new Date().toLocaleTimeString()}`+(t?` · last answer ${t.toLocaleTimeString()}`:"");
+}
+function start(){ key=document.getElementById("keyIn").value.trim()||key; if(!key) return;
+  try{ localStorage.setItem("econ2103-roadmap-dashkey",key); }catch(e){}
+  document.getElementById("keyErr").textContent=""; fetchData(); clearInterval(timer); timer=setInterval(fetchData,10000); }
+document.getElementById("keyGo").addEventListener("click",start);
+document.getElementById("keyIn").addEventListener("keydown",e=>{ if(e.key==="Enter") start(); });
+document.querySelectorAll("[data-sec]").forEach(b=>b.addEventListener("click",()=>{ sec=b.dataset.sec;
+  document.querySelectorAll("[data-sec]").forEach(x=>x.classList.toggle("on",x===b)); render(); }));
+if(key){ document.getElementById("keyIn").value=key; start(); }
+</script>
+</body>
+</html>
